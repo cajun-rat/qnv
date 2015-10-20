@@ -68,6 +68,10 @@
             <family>Consolas</family>
             <pointsize>10</pointsize>
            </font>
+           <font>
+            <family>Inconsolata</family>
+            <pointsize>10</pointsize>
+           </font>
           </property>
          </widget>
         </item>

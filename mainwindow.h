@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
-#include <Qtimer>
+#include <QTimer>
 #include "notes.h"
 
 namespace Ui {
