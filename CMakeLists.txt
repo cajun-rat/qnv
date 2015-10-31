@@ -3,8 +3,6 @@ project(qnv)
 
 # Tell CMake to run moc when necessary:
 set(CMAKE_AUTOMOC ON)
-# Tell CMake to run the UI compiler when necessary
-SET(CMAKE_AUTOUIC ON) 
 
 # As moc files are generated in the binary dir, tell CMake
 # to always look for includes there:
@@ -19,6 +17,19 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Boost REQUIRED filesystem system random)
 include_directories(${Boost_INCLUDE_DIRS})
 
-add_executable(qnv main.cpp mainwindow.cpp notes.cpp mainwindow.ui)
+qt5_wrap_ui(UI_MAINWINDOW mainwindow.ui)
+add_executable(qnv main.cpp mainwindow.cpp notes.cpp ${UI_MAINWINDOW})
 target_link_libraries(qnv ${Boost_LIBRARIES})
 qt5_use_modules(qnv Widgets)
+
+# Export compile_commands.json for clang-check
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Generate ctags
+set_source_files_properties(tags PROPERTIES GENERATED true)
+add_custom_target(tags
+    COMMAND ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+add_dependencies(qnv tags)
+
+message("Build type is ${CMAKE_BUILD_TYPE}")
