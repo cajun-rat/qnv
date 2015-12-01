@@ -162,7 +162,6 @@ void MainWindow::noteSelectionChanged(QListWidgetItem* current, QListWidgetItem*
 
 void MainWindow::noteBodyChanged()
 {
-    qDebug() << "Note text body changed";
     m_currentNoteSaved->setText("Current note dirty");
     m_dirtywritetimeout->start();
 }
