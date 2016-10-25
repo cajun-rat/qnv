@@ -8,9 +8,9 @@ Install prerequisites:
 
 Configure with cmake:
 
-	mkdir build
-	cd build
-	cmake ..
+	mkdir build-rel
+	cd build-rel
+	cmake -DCMAKE_BUILD_TYPE=Release ..
 
 Build:
 
