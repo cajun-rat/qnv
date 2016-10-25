@@ -4,3 +4,5 @@
 *.wixobj
 *.wixpdb
 *.pro.user
+/build-rel
+/tags
