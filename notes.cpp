@@ -7,7 +7,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/detail/json_parser_error.hpp>
 #include <boost/filesystem.hpp>
 
 // TODO
