@@ -26,11 +26,14 @@ qt5_use_modules(qnv Widgets)
 # Export compile_commands.json for clang-check
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Generate ctags
-set_source_files_properties(tags PROPERTIES GENERATED true)
-add_custom_target(tags
-    COMMAND ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-add_dependencies(qnv tags)
+#
+install(TARGETS qnv RUNTIME DESTINATION bin)
+
+# Debian Packaging
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "phil@phil-wise.com")
+set(CPACK_DEBIAN_PACKAGE_VERSION 1.0)
+include(CPack)
+
 
 message("Build type is ${CMAKE_BUILD_TYPE}")
