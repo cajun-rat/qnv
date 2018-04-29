@@ -9,7 +9,11 @@ set(CMAKE_AUTOMOC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -Wextra -Werror")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_EXTENSIONS OFF)
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # Widgets finds its own dependencies.
 find_package(Qt5Widgets REQUIRED)
