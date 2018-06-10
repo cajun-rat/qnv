@@ -5,4 +5,5 @@
 *.wixpdb
 *.pro.user
 /build-rel
+/build
 /tags
