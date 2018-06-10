@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef QNV_MAINWINDOW_H_
+#define QNV_MAINWINDOW_H_
 
 #include <QLabel>
 #include <QMainWindow>
@@ -17,25 +17,26 @@ class MainWindow : public QMainWindow {
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
- private:
-  static const int c_writetimeoutms = 2000;
-
-  Ui::MainWindow *m_ui;
-  Note::Ptr m_currentNote;
-  QLabel *m_currentNoteSaved;
-  std::vector<NoteListWidget *> m_notes;
-  QTimer *m_dirtywritetimeout;
-  void setCurrentNote(Note::Ptr note);
-  void saveCurrentNote();
-  std::string notesDirectory() const;
-
  public slots:
-  void updateSearch();
-  void noteSelectionChanged(QListWidgetItem *, QListWidgetItem *);
-  void noteBodyChanged();
-  void saveNote();
-  void searchEnterPressed();
-  void changeNotesDirectory();
+  void UpdateSearch();
+  void NoteSelectionChanged(QListWidgetItem *, QListWidgetItem *);
+  void NoteBodyChanged();
+  void SaveNote();
+  void Search();
+  void ChangeNotesDirectory();
+
+ private:
+  static const int kWriteTimeoutMs = 2000;
+
+  void SetCurrentNote(Note::Ptr note);
+  void SaveCurrentNote();
+  std::string NotesDirectory() const;
+
+  Ui::MainWindow *ui_;
+  Note::Ptr current_note_;
+  QLabel *current_note_status_;
+  std::vector<NoteListWidget *> notes_;
+  QTimer *writeback_timer_;
 };
 
-#endif  // MAINWINDOW_H
+#endif  // QNV_MAINWINDOW_H_

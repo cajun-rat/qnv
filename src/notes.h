@@ -1,5 +1,5 @@
-#ifndef NOTES_H
-#define NOTES_H
+#ifndef QNV_NOTES_H_
+#define QNV_NOTES_H_
 
 #include <QAbstractListModel>
 #include <QDebug>
@@ -19,33 +19,34 @@ class Note {
   Note &operator=(const Note &) = delete;
 
   QString title() const;
-  QString body() const { return m_body; }
-  void save(QString newBody);
+  QString body() const { return body_; }
+  void Save(QString newBody);
   bool operator<(const Note &other) const;
   friend QDebug &operator<<(QDebug &debug, const Note &note);
 
  private:
-  std::string m_filepath;
-  QString m_body;
-  double m_createdate;
-  double m_modifydate;
+  std::string file_path_;
+  QString body_;
+  double create_date_;
+  double last_modified_date_;
 };
 
 QDebug &operator<<(QDebug &debug, const Note::Ptr &note);
+
 /* Order by last modified date */
 bool operator<(const Note::Ptr &lhs, const Note::Ptr &rhs);
 
 class NoteListWidget : public QListWidgetItem {
  public:
   explicit NoteListWidget(Note::Ptr note);
-  void updateVisibility(QString searchTerm);
-  Note::Ptr note() const { return m_note; }
-  virtual bool operator<(const QListWidgetItem &other) const;
+  void UpdateVisibility(QString searchTerm);
+  Note::Ptr note() const { return note_; }
+  bool operator<(const QListWidgetItem &other) const override;
 
  private:
-  Note::Ptr m_note;
+  Note::Ptr note_;
 };
 
-std::vector<Note::Ptr> readNotes(const std::string &dirpath);
+std::vector<Note::Ptr> ReadNotes(const std::string &dirpath);
 
-#endif  // NOTES_H
+#endif  // QNV_NOTES_H_

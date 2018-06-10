@@ -14,61 +14,61 @@ namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
 NoteListWidget::NoteListWidget(Note::Ptr note)
-    : QListWidgetItem(note->title()), m_note(note) {}
+    : QListWidgetItem(note->title()), note_(note) {}
 
-void NoteListWidget::updateVisibility(QString searchTerm) {
-  setHidden(!m_note->body().contains(searchTerm, Qt::CaseInsensitive));
+void NoteListWidget::UpdateVisibility(QString searchTerm) {
+  setHidden(!note_->body().contains(searchTerm, Qt::CaseInsensitive));
 }
 
 bool NoteListWidget::operator<(const QListWidgetItem &otherw) const {
   const NoteListWidget &other = dynamic_cast<const NoteListWidget &>(otherw);
-  return other.m_note < m_note;
+  return other.note_ < note_;
 }
 
-Note::Note(const std::string filepath) : m_filepath(filepath) {
+Note::Note(const std::string filepath) : file_path_(filepath) {
   pt::ptree pt;
-  if (fs::exists(filepath)) {
-    read_json(filepath, pt);
-    m_body = QString::fromStdString(pt.get<std::string>("content"));
-    m_createdate = pt.get<double>("createdate", 0.0);
-    m_modifydate = pt.get<double>("modifydate", 0.0);
+  if (fs::exists(file_path_)) {
+    read_json(file_path_, pt);
+    body_ = QString::fromStdString(pt.get<std::string>("content"));
+    create_date_ = pt.get<double>("createdate", 0.0);
+    last_modified_date_ = pt.get<double>("modifydate", 0.0);
   } else {
-    m_createdate = m_modifydate =
+    create_date_ = last_modified_date_ =
         ((double)QDateTime::currentMSecsSinceEpoch()) / 1000.0;
   }
 }
 
-void Note::save(QString newBody) {
+void Note::Save(QString newBody) {
   pt::ptree pt;
   pt::ptree tags;
 
-  m_body = newBody;
+  body_ = newBody;
 
   double now = ((double)QDateTime::currentMSecsSinceEpoch()) / 1000.0;
-  m_modifydate = now;
+  last_modified_date_ = now;
   // For compatibility with nvPY
-  pt.put("modifydate", m_modifydate);
+  pt.put("modifydate", last_modified_date_);
   pt.put_child("tags", tags);
-  pt.put("createdate", m_createdate);
+  pt.put("createdate", create_date_);
   pt.put("syncdate", 0);
   pt.put("content", newBody.toStdString());
-  pt.put("savedate", m_modifydate);
+  pt.put("savedate", last_modified_date_);
 
-  write_json(m_filepath, pt);
-  qDebug() << "Saved to disk:" << QString::fromStdString(m_filepath);
+  write_json(file_path_, pt);
+  qDebug() << "Saved to disk:" << QString::fromStdString(file_path_);
 }
 
 QString Note::title() const {
-  int titleend = m_body.indexOf('\n');
+  int titleend = body_.indexOf('\n');
   if (titleend == -1) {
-    return m_body;
+    return body_;
   } else {
-    return m_body.left(titleend);
+    return body_.left(titleend);
   }
 }
 
 bool Note::operator<(const Note &other) const {
-  return m_modifydate < other.m_modifydate;
+  return last_modified_date_ < other.last_modified_date_;
 }
 
 bool operator<(const Note::Ptr &lhs, const Note::Ptr &rhs) {
@@ -79,14 +79,14 @@ QDebug &operator<<(QDebug &d, const Note &note) {
   std::stringstream ss;
   d << note.title();
 
-  ss << note.m_modifydate;
+  ss << note.last_modified_date_;
   d << QString::fromStdString(ss.str());
   return d;
 }
 
 QDebug &operator<<(QDebug &d, const Note::Ptr &note) { return d << *note; }
 
-std::vector<Note::Ptr> readNotes(const std::string &dirpath) {
+std::vector<Note::Ptr> ReadNotes(const std::string &dirpath) {
   fs::path p(dirpath);
 
   if (!fs::exists(p) || !fs::is_directory(p)) {
