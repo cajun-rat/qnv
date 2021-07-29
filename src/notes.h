@@ -14,13 +14,13 @@
 class Note {
  public:
   typedef std::shared_ptr<Note> Ptr;
-  explicit Note(const std::string filepath);
+  explicit Note(std::string filepath);
   Note(const Note &) = delete;
   Note &operator=(const Note &) = delete;
 
   QString title() const;
   QString body() const { return body_; }
-  void Save(QString newBody);
+  void Save(const QString &newBody);
   bool operator<(const Note &other) const;
   friend QDebug &operator<<(QDebug &debug, const Note &note);
 

@@ -2,12 +2,12 @@
 #include <QDateTime>
 #include <QObject>
 #include <QtDebug>
-#include <sstream>
 #include <string>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <utility>
 
 namespace fs = boost::filesystem;
 
@@ -21,11 +21,11 @@ void NoteListWidget::UpdateVisibility(QString searchTerm) {
 }
 
 bool NoteListWidget::operator<(const QListWidgetItem &otherw) const {
-  const NoteListWidget &other = dynamic_cast<const NoteListWidget &>(otherw);
+  const auto &other = dynamic_cast<const NoteListWidget &>(otherw);
   return other.note_ < note_;
 }
 
-Note::Note(const std::string filepath) : file_path_(filepath) {
+Note::Note(std::string filepath) : file_path_(std::move(filepath)) {
   pt::ptree pt;
   if (fs::exists(file_path_)) {
     read_json(file_path_, pt);
@@ -38,7 +38,7 @@ Note::Note(const std::string filepath) : file_path_(filepath) {
   }
 }
 
-void Note::Save(QString newBody) {
+void Note::Save(const QString &newBody) {
   pt::ptree pt;
   pt::ptree tags;
 

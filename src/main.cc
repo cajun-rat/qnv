@@ -1,6 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
-#include "notes.h"
+
 int main(int argc, char *argv[]) {
   QCoreApplication::setOrganizationName("Phil Wise");
   QCoreApplication::setOrganizationDomain("phil-wise.com");
@@ -9,5 +9,5 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   MainWindow mainwindow;
   mainwindow.show();
-  return app.exec();
+  return QApplication::exec();
 }

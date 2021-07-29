@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
   current_note_status_ = new QLabel("current note", ui_->statusBar);
   ui_->statusBar->addPermanentWidget(current_note_status_);
   for (Note::Ptr i : ReadNotes(NotesDirectory())) {
-    NoteListWidget* w = new NoteListWidget(i);
+    auto* w = new NoteListWidget(i);
     ui_->notes->addItem(w);
     notes_.push_back(w);  // ownership handled by Qt
   }
@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget* parent)
           SLOT(NoteBodyChanged(void)));
   connect(writeback_timer_, SIGNAL(timeout()), this, SLOT(SaveNote(void)));
   // ctrl-f goes to find
-  QShortcut* ctrlf = new QShortcut(QKeySequence("Ctrl+F"), this);
+  auto* ctrlf = new QShortcut(QKeySequence("Ctrl+F"), this);
   connect(ctrlf, SIGNAL(activated()), ui_->search, SLOT(setFocus()));
 
   // enter in search box
@@ -74,9 +74,7 @@ std::string MainWindow::NotesDirectory() const {
 void MainWindow::UpdateSearch() {
   QString t = ui_->search->text();
   bool foundOne = false;
-  for (std::vector<NoteListWidget*>::iterator i = notes_.begin();
-       i != notes_.end(); ++i) {
-    NoteListWidget* widget = *i;
+  for (auto widget : notes_) {
     widget->UpdateVisibility(t);
     if (!foundOne && !widget->isHidden()) {
       widget->setSelected(true);
@@ -93,8 +91,7 @@ void MainWindow::Search() {
   QList<QListWidgetItem*> selectedItems = ui_->notes->selectedItems();
   if (selectedItems.length() > 0) {
     qDebug() << "Setting note";
-    NoteListWidget* noteListWidget =
-        dynamic_cast<NoteListWidget*>(selectedItems[0]);
+    auto* noteListWidget = dynamic_cast<NoteListWidget*>(selectedItems[0]);
     SetCurrentNote(noteListWidget->note());
   } else {
     qDebug() << "Creating a new note";
@@ -112,7 +109,7 @@ void MainWindow::Search() {
     Note::Ptr newNote = std::make_shared<Note>(filename);
     newNote->Save(ui_->search->text());
     SetCurrentNote(newNote);
-    NoteListWidget* w = new NoteListWidget(newNote);
+    auto* w = new NoteListWidget(newNote);
     ui_->notes->addItem(w);
     notes_.push_back(w);
   }
@@ -155,7 +152,7 @@ void MainWindow::SetCurrentNote(Note::Ptr note) {
 
 void MainWindow::NoteSelectionChanged(QListWidgetItem* current,
                                       QListWidgetItem*) {
-  NoteListWidget* noteListWidget = dynamic_cast<NoteListWidget*>(current);
+  auto* noteListWidget = dynamic_cast<NoteListWidget*>(current);
   SetCurrentNote(noteListWidget->note());
 }
 
