@@ -20,11 +20,15 @@ class Note {
 
   QString title() const;
   QString body() const { return body_; }
+  bool Matches(const QString &query_string,
+               QString *summary_out = nullptr) const;
   void Save(const QString &newBody);
   bool operator<(const Note &other) const;
   friend QDebug &operator<<(QDebug &debug, const Note &note);
 
  private:
+  const int kSummaryStartOffset = 5;
+  const int kSummaryLength = 30;
   std::string file_path_;
   QString body_;
   double create_date_;
@@ -39,7 +43,7 @@ bool operator<(const Note::Ptr &lhs, const Note::Ptr &rhs);
 class NoteListWidget : public QListWidgetItem {
  public:
   explicit NoteListWidget(Note::Ptr note);
-  void UpdateVisibility(QString searchTerm);
+  void UpdateVisibility(const QString &query_string);
   Note::Ptr note() const { return note_; }
   bool operator<(const QListWidgetItem &other) const override;
 

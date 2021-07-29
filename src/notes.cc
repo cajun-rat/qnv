@@ -1,12 +1,12 @@
 #include "notes.h"
+
 #include <QDateTime>
 #include <QObject>
 #include <QtDebug>
-#include <string>
-
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <string>
 #include <utility>
 
 namespace fs = boost::filesystem;
@@ -16,8 +16,10 @@ namespace pt = boost::property_tree;
 NoteListWidget::NoteListWidget(Note::Ptr note)
     : QListWidgetItem(note->title()), note_(note) {}
 
-void NoteListWidget::UpdateVisibility(QString searchTerm) {
-  setHidden(!note_->body().contains(searchTerm, Qt::CaseInsensitive));
+void NoteListWidget::UpdateVisibility(const QString &query_string) {
+  QString summary;
+  setHidden(!note_->Matches(query_string, &summary));
+  setToolTip(summary);
 }
 
 bool NoteListWidget::operator<(const QListWidgetItem &otherw) const {
@@ -36,6 +38,28 @@ Note::Note(std::string filepath) : file_path_(std::move(filepath)) {
     create_date_ = last_modified_date_ =
         ((double)QDateTime::currentMSecsSinceEpoch()) / 1000.0;
   }
+}
+
+bool Note::Matches(const QString &query_string, QString *summary) const {
+  if (query_string.isEmpty()) {
+    if (summary != nullptr) {
+      // Special Case matching the empty string, and remove the tooltip
+      *summary = "";
+    }
+    return true;
+  }
+  int idx = body_.indexOf(query_string, Qt::CaseInsensitive);
+  if (idx == -1) {
+    return false;
+  }
+  if (summary != nullptr) {
+    int start = idx - kSummaryStartOffset;
+    if (start < 0) {
+      start = 0;
+    }
+    *summary = body_.mid(start, kSummaryLength);
+  }
+  return true;
 }
 
 void Note::Save(const QString &newBody) {
