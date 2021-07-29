@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   current_note_status_ = new QLabel("current note", ui_->statusBar);
   ui_->statusBar->addPermanentWidget(current_note_status_);
-  for (Note::Ptr i : ReadNotes(NotesDirectory())) {
+  for (const Note::Ptr& i : ReadNotes(NotesDirectory())) {
     auto* w = new NoteListWidget(i);
     ui_->notes->addItem(w);
     notes_.push_back(w);  // ownership handled by Qt

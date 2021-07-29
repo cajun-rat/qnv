@@ -59,11 +59,11 @@ void Note::Save(const QString &newBody) {
 }
 
 QString Note::title() const {
-  int titleend = body_.indexOf('\n');
-  if (titleend == -1) {
+  int title_end = body_.indexOf('\n');
+  if (title_end == -1) {
     return body_;
   } else {
-    return body_.left(titleend);
+    return body_.left(title_end);
   }
 }
 
@@ -96,11 +96,8 @@ std::vector<Note::Ptr> ReadNotes(const std::string &dirpath) {
   std::vector<Note::Ptr> res;
 
   for (fs::directory_iterator f(p); f != fs::directory_iterator(); ++f) {
-    // TODO handle junk in the directory
     std::string filename(f->path().string());
     if (fs::extension(f->path()) != ".json") {
-      qDebug() << "Skipping wrong extension"
-               << QString::fromStdString(fs::extension(f->path()));
       continue;
     }
     try {
