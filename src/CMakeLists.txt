@@ -12,5 +12,6 @@ qt5_use_modules(qnv Widgets)
 
 qnv_clang_format(${SOURCES} ${HEADERS})
 
+set_property(SOURCE ${UI_MAINWINDOW} PROPERTY SKIP_AUTOMOC ON)
 
 install(TARGETS qnv RUNTIME DESTINATION bin)
