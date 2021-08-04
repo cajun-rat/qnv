@@ -48,7 +48,7 @@ bool Note::Matches(const QString &query_string, QString *summary) const {
     }
     return true;
   }
-  int idx = body_.indexOf(query_string, Qt::CaseInsensitive);
+  int idx = body_.indexOf(query_string, 0, Qt::CaseInsensitive);
   if (idx == -1) {
     return false;
   }
