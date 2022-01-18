@@ -4,19 +4,26 @@
 
 Install prerequisites:
 
-	sudo apt-get install cmake  build-essential qtbase5-dev exuberant-ctags libboost-filesystem-dev libboost-system-dev libboost-random-dev 
+	sudo apt install cmake ninja-build build-essential qtbase5-dev exuberant-ctags libboost-filesystem-dev libboost-system-dev libboost-random-dev
 
 Configure with cmake:
 
 	mkdir build-rel
 	cd build-rel
-	cmake -DCMAKE_BUILD_TYPE=Release ..
+	cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 
-Build:
+Build and run locally
 
-	make
+	ninja
+	src/qnv
 
-Run:
-	
-	./qnv
+Create a Debian Package
 
+    cpack
+
+Install it
+
+    sudo apt install ./qnv-1.1-Linux.deb
+
+qnv notes are stored in `.qnv` in your home directory.
+Checking this directory into git is a good way to share it between computers.
