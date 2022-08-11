@@ -72,6 +72,10 @@
             <family>Inconsolata</family>
             <pointsize>10</pointsize>
            </font>
+           <font>
+            <family>B612 Mono</family>
+            <pointsize>10</pointsize>
+           </font>
           </property>
          </widget>
         </item>

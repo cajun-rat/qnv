@@ -55,7 +55,7 @@ MainWindow::~MainWindow() {
   delete writeback_timer_;
 }
 
-std::string MainWindow::NotesDirectory() const {
+std::string MainWindow::NotesDirectory() {
   QString defaultpath =
       QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0] +
       "/.qnv";
@@ -134,7 +134,7 @@ void MainWindow::ChangeNotesDirectory() {
   }
 }
 
-void MainWindow::SetCurrentNote(Note::Ptr note) {
+void MainWindow::SetCurrentNote(const Note::Ptr& note) {
   // Write out the old note
   if (writeback_timer_->isActive()) {
     writeback_timer_->stop();

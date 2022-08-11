@@ -28,9 +28,9 @@ class MainWindow : public QMainWindow {
  private:
   static const int kWriteTimeoutMs = 2000;
 
-  void SetCurrentNote(Note::Ptr note);
+  void SetCurrentNote(const Note::Ptr& note);
   void SaveCurrentNote();
-  std::string NotesDirectory() const;
+  static std::string NotesDirectory() ;
 
   Ui::MainWindow *ui_;
   Note::Ptr current_note_;
