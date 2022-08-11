@@ -23,6 +23,8 @@ class Note {
   bool Matches(const QString &query_string,
                QString *summary_out = nullptr) const;
   void Save(const QString &newBody);
+  int CursorPosition() const { return cursor_position_;}
+  void CursorPosition(int position) { cursor_position_ = position;}
   bool operator<(const Note &other) const;
   friend QDebug &operator<<(QDebug &debug, const Note &note);
 
@@ -33,6 +35,7 @@ class Note {
   QString body_;
   double create_date_;
   double last_modified_date_;
+  int cursor_position_{0};
 };
 
 QDebug &operator<<(QDebug &debug, const Note::Ptr &note);

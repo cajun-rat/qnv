@@ -142,12 +142,22 @@ void MainWindow::SetCurrentNote(const Note::Ptr& note) {
     qDebug() << "Saving dirty buffer on note switch";
     SaveCurrentNote();
   }
+  QPlainTextEdit *editor_ui = ui_->currentNote;
+  if (current_note_) {
+    int old_position = editor_ui->textCursor().position();
+    current_note_->CursorPosition(old_position);
+  }
 
-  ui_->currentNote->setPlainText(note->body());
-  writeback_timer_
-      ->stop();  // Setting the text causes the dirty flag to be be set
+  editor_ui->setPlainText(note->body());
+  // Setting the text causes the dirty flag to be be set
+  writeback_timer_->stop();
   current_note_status_->setText("");
   current_note_ = note;
+  qDebug() << "Setting cursor position to " << note->CursorPosition();
+  QTextCursor cursor = editor_ui->textCursor();
+  cursor.setPosition(note->CursorPosition(), QTextCursor::MoveMode::MoveAnchor);
+  editor_ui->setTextCursor(cursor);
+  editor_ui->ensureCursorVisible();
 }
 
 void MainWindow::NoteSelectionChanged(QListWidgetItem* current,
