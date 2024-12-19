@@ -1,6 +1,4 @@
 #include "mainwindow.h"
-#include <QStringListModel>
-#include "ui_mainwindow.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -8,13 +6,16 @@
 #include <QSettings>
 #include <QShortcut>
 #include <QStandardPaths>
+#include <QStringListModel>
 #include <boost/filesystem.hpp>
 #include <boost/random.hpp>
 #include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <memory>
 #include <vector>
+
 #include "notes.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -38,7 +39,8 @@ MainWindow::MainWindow(QWidget* parent)
           SLOT(UpdateSearch(void)));
   connect(ui_->currentNote, SIGNAL(textChanged(void)), this,
           SLOT(NoteBodyChanged(void)));
-  connect(writeback_timer_, SIGNAL(timeout()), this, SLOT(SaveNote(void)));
+  connect(writeback_timer_, SIGNAL(timeout()), this,
+          SLOT(OnSaveNoteTimer(void)));
   // ctrl-f goes to find
   auto* ctrlf = new QShortcut(QKeySequence("Ctrl+F"), this);
   connect(ctrlf, SIGNAL(activated()), ui_->search, SLOT(setFocus()));
@@ -92,7 +94,7 @@ void MainWindow::Search() {
   if (selectedItems.length() > 0) {
     qDebug() << "Setting note";
     auto* noteListWidget = dynamic_cast<NoteListWidget*>(selectedItems[0]);
-    SetCurrentNote(noteListWidget->note());
+    SetCurrentNote(noteListWidget);
   } else {
     qDebug() << "Creating a new note";
     std::string chars = "0123456789abcdef";
@@ -108,10 +110,10 @@ void MainWindow::Search() {
 
     Note::Ptr newNote = std::make_shared<Note>(filename);
     newNote->Save(ui_->search->text());
-    SetCurrentNote(newNote);
-    auto* w = new NoteListWidget(newNote);
-    ui_->notes->addItem(w);
-    notes_.push_back(w);
+    auto* noteListWidget = new NoteListWidget(newNote);
+    SetCurrentNote(noteListWidget);
+    ui_->notes->addItem(noteListWidget);
+    notes_.push_back(noteListWidget);
   }
   ui_->currentNote->setFocus();
   QTextCursor cursor = ui_->currentNote->textCursor();
@@ -134,7 +136,7 @@ void MainWindow::ChangeNotesDirectory() {
   }
 }
 
-void MainWindow::SetCurrentNote(const Note::Ptr& note) {
+void MainWindow::SetCurrentNote(NoteListWidget* note_list_widget) {
   // Write out the old note
   if (writeback_timer_->isActive()) {
     writeback_timer_->stop();
@@ -142,17 +144,18 @@ void MainWindow::SetCurrentNote(const Note::Ptr& note) {
     qDebug() << "Saving dirty buffer on note switch";
     SaveCurrentNote();
   }
-  QPlainTextEdit *editor_ui = ui_->currentNote;
+  QPlainTextEdit* editor_ui = ui_->currentNote;
   if (current_note_) {
     int old_position = editor_ui->textCursor().position();
-    current_note_->CursorPosition(old_position);
+    current_note_->note()->CursorPosition(old_position);
   }
 
+  auto note = note_list_widget->note();
   editor_ui->setPlainText(note->body());
   // Setting the text causes the dirty flag to be be set
   writeback_timer_->stop();
   current_note_status_->setText("");
-  current_note_ = note;
+  current_note_ = note_list_widget;
   qDebug() << "Setting cursor position to " << note->CursorPosition();
   QTextCursor cursor = editor_ui->textCursor();
   cursor.setPosition(note->CursorPosition(), QTextCursor::MoveMode::MoveAnchor);
@@ -163,7 +166,7 @@ void MainWindow::SetCurrentNote(const Note::Ptr& note) {
 void MainWindow::NoteSelectionChanged(QListWidgetItem* current,
                                       QListWidgetItem*) {
   auto* noteListWidget = dynamic_cast<NoteListWidget*>(current);
-  SetCurrentNote(noteListWidget->note());
+  SetCurrentNote(noteListWidget);
 }
 
 void MainWindow::NoteBodyChanged() {
@@ -171,16 +174,16 @@ void MainWindow::NoteBodyChanged() {
   writeback_timer_->start();
 }
 
-void MainWindow::SaveNote() {
+void MainWindow::OnSaveNoteTimer() {
   // write to disk
   qDebug() << "Writing note to disk";
   assert(current_note_.get() != 0);
   SaveCurrentNote();
-
   current_note_status_->setText("Current note saved");
 }
 
 void MainWindow::SaveCurrentNote() {
-  current_note_->Save(ui_->currentNote->document()->toPlainText());
+  current_note_->note()->Save(ui_->currentNote->document()->toPlainText());
+  current_note_->UpdateTitle();
   ui_->notes->sortItems();
 }

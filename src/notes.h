@@ -23,8 +23,8 @@ class Note {
   bool Matches(const QString &query_string,
                QString *summary_out = nullptr) const;
   void Save(const QString &newBody);
-  int CursorPosition() const { return cursor_position_;}
-  void CursorPosition(int position) { cursor_position_ = position;}
+  int CursorPosition() const { return cursor_position_; }
+  void CursorPosition(int position) { cursor_position_ = position; }
   bool operator<(const Note &other) const;
   friend QDebug &operator<<(QDebug &debug, const Note &note);
 
@@ -47,6 +47,7 @@ class NoteListWidget : public QListWidgetItem {
  public:
   explicit NoteListWidget(Note::Ptr note);
   void UpdateVisibility(const QString &query_string);
+  void UpdateTitle();
   Note::Ptr note() const { return note_; }
   bool operator<(const QListWidgetItem &other) const override;
 

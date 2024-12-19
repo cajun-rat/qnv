@@ -6,6 +6,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <iomanip>
 #include <string>
 #include <utility>
 
@@ -21,6 +22,8 @@ void NoteListWidget::UpdateVisibility(const QString &query_string) {
   setHidden(!note_->Matches(query_string, &summary));
   setToolTip(summary);
 }
+
+void NoteListWidget::UpdateTitle() { setText(note_->title()); }
 
 bool NoteListWidget::operator<(const QListWidgetItem &otherw) const {
   const auto &other = dynamic_cast<const NoteListWidget &>(otherw);
