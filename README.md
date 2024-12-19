@@ -4,7 +4,7 @@
 
 Install prerequisites:
 
-	sudo apt install cmake ninja-build build-essential qtbase5-dev exuberant-ctags libboost-filesystem-dev libboost-system-dev libboost-random-dev
+	sudo apt install cmake ninja-build build-essential qtbase5-dev exuberant-ctags libboost-system-dev libboost-random-dev
 
 Configure with cmake:
 

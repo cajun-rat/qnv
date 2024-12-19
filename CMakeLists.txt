@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0043 NEW)
 project(qnv)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Tell CMake to run moc when necessary:
@@ -12,8 +12,6 @@ set(CMAKE_AUTOMOC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
 if (CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 endif(CMAKE_COMPILER_IS_GNUCXX)
@@ -26,7 +24,7 @@ endif()
 find_package(Qt5Widgets REQUIRED)
 
 # Boost
-find_package(Boost REQUIRED filesystem system random)
+find_package(Boost REQUIRED system random)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # clang-check and clang-format

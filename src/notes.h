@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 #include <QTextDocument>
 #include <QVariant>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@
 class Note {
  public:
   typedef std::shared_ptr<Note> Ptr;
-  explicit Note(std::string filepath);
+  explicit Note(std::filesystem::path filepath);
   Note(const Note &) = delete;
   Note &operator=(const Note &) = delete;
 
@@ -31,7 +32,7 @@ class Note {
  private:
   const int kSummaryStartOffset = 5;
   const int kSummaryLength = 30;
-  std::string file_path_;
+  std::filesystem::path file_path_;
   QString body_;
   double create_date_;
   double last_modified_date_;
@@ -55,6 +56,6 @@ class NoteListWidget : public QListWidgetItem {
   Note::Ptr note_;
 };
 
-std::vector<Note::Ptr> ReadNotes(const std::string &dirpath);
+std::vector<Note::Ptr> ReadNotes(const std::filesystem::path &dirpath);
 
 #endif  // QNV_NOTES_H_

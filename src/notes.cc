@@ -3,14 +3,14 @@
 #include <QDateTime>
 #include <QObject>
 #include <QtDebug>
-#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <filesystem>
 #include <iomanip>
 #include <string>
 #include <utility>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace pt = boost::property_tree;
 
@@ -30,7 +30,7 @@ bool NoteListWidget::operator<(const QListWidgetItem &otherw) const {
   return other.note_ < note_;
 }
 
-Note::Note(std::string filepath) : file_path_(std::move(filepath)) {
+Note::Note(std::filesystem::path filepath) : file_path_(std::move(filepath)) {
   pt::ptree pt;
   if (fs::exists(file_path_)) {
     read_json(file_path_, pt);
@@ -113,22 +113,20 @@ QDebug &operator<<(QDebug &d, const Note &note) {
 
 QDebug &operator<<(QDebug &d, const Note::Ptr &note) { return d << *note; }
 
-std::vector<Note::Ptr> ReadNotes(const std::string &dirpath) {
-  fs::path p(dirpath);
-
-  if (!fs::exists(p) || !fs::is_directory(p)) {
+std::vector<Note::Ptr> ReadNotes(const std::filesystem::path &dirpath) {
+  if (!fs::exists(dirpath) || !fs::is_directory(dirpath)) {
     // TODO throw
   }
 
   std::vector<Note::Ptr> res;
 
-  for (fs::directory_iterator f(p); f != fs::directory_iterator(); ++f) {
+  for (fs::directory_iterator f(dirpath); f != fs::directory_iterator(); ++f) {
     std::string filename(f->path().string());
-    if (fs::extension(f->path()) != ".json") {
+    if (f->path().extension() != ".json") {
       continue;
     }
     try {
-      res.push_back(std::make_shared<Note>(filename));
+      res.push_back(std::make_shared<Note>(*f));
     } catch (boost::property_tree::json_parser::json_parser_error &e) {
       qDebug() << "failed to open" << QString::fromStdString(f->path().string())
                << QString::fromStdString(e.message());
