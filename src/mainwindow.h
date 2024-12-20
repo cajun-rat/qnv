@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow {
   static std::string NotesDirectory();
 
   Ui::MainWindow *ui_;
-  NoteListWidget *current_note_;
+  NoteListWidget *current_note_{nullptr};
   QLabel *current_note_status_;
   std::vector<NoteListWidget *> notes_;
   QTimer *writeback_timer_;
